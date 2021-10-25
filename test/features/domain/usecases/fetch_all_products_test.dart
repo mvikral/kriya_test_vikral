@@ -6,7 +6,7 @@ import 'package:kriya_test_vikral/global/error/failures.dart';
 
 import 'package:mockito/mockito.dart';
 
-import '../../../helper/setup_purchase_repository.mocks.dart';
+import '../../../helper/setup_mockito_generate_mocks.mocks.dart';
 
 main() {
   late MockIPurchaseRepository mockIPurchaseRepository;
