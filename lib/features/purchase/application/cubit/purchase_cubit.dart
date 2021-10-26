@@ -2,10 +2,10 @@ import 'dart:convert';
 
 import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:kriya_test_vikral/features/purchase/domain/entities/cart.dart';
-import 'package:kriya_test_vikral/features/purchase/domain/entities/product.dart';
-import 'package:kriya_test_vikral/features/purchase/domain/usecases/fetch_all_products.dart';
-import 'package:kriya_test_vikral/global/error/failures.dart';
+import '../../domain/entities/cart.dart';
+import '../../domain/entities/product.dart';
+import '../../domain/usecases/fetch_all_products.dart';
+import '../../../../global/error/failures.dart';
 part 'purchase_cubit.freezed.dart';
 
 part 'purchase_state.dart';
