@@ -2,8 +2,6 @@
 // in kriya_test_vikral/test/helper/setup_mockito_generate_mocks.dart.
 // Do not manually edit this file.
 
-// ignore_for_file: unnecessary_overrides
-
 import 'dart:async' as _i8;
 import 'dart:convert' as _i11;
 import 'dart:typed_data' as _i12;
@@ -21,6 +19,8 @@ import 'package:kriya_test_vikral/features/purchase/domain/entities/product.dart
     as _i10;
 import 'package:kriya_test_vikral/features/purchase/domain/repositories/purchase_repository_contract.dart'
     as _i7;
+import 'package:kriya_test_vikral/features/purchase/domain/usecases/fetch_all_products.dart'
+    as _i16;
 import 'package:kriya_test_vikral/global/error/failures.dart' as _i9;
 import 'package:kriya_test_vikral/global/network/network_info.dart' as _i14;
 import 'package:mockito/mockito.dart' as _i1;
@@ -47,6 +47,9 @@ class _FakeAddressCheckResult_4 extends _i1.Fake
     implements _i5.AddressCheckResult {}
 
 class _FakeClient_5 extends _i1.Fake implements _i6.Client {}
+
+class _FakeIPurchaseRepository_6 extends _i1.Fake
+    implements _i7.IPurchaseRepository {}
 
 /// A class which mocks [IPurchaseRepository].
 ///
@@ -243,6 +246,29 @@ class MockPurchaseRemoteData extends _i1.Mock
       (super.noSuchMethod(Invocation.method(#fetchAllProducts, []),
               returnValue: Future<List<_i10.Product>>.value(<_i10.Product>[]))
           as _i8.Future<List<_i10.Product>>);
+  @override
+  String toString() => super.toString();
+}
+
+/// A class which mocks [FetchAllProducts].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockFetchAllProducts extends _i1.Mock implements _i16.FetchAllProducts {
+  MockFetchAllProducts() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i7.IPurchaseRepository get repository => (super.noSuchMethod(
+      Invocation.getter(#repository),
+      returnValue: _FakeIPurchaseRepository_6()) as _i7.IPurchaseRepository);
+  @override
+  _i8.Future<_i2.Either<_i9.Failure, List<_i10.Product>>> call() => (super
+          .noSuchMethod(Invocation.method(#call, []),
+              returnValue:
+                  Future<_i2.Either<_i9.Failure, List<_i10.Product>>>.value(
+                      _FakeEither_0<_i9.Failure, List<_i10.Product>>()))
+      as _i8.Future<_i2.Either<_i9.Failure, List<_i10.Product>>>);
   @override
   String toString() => super.toString();
 }
