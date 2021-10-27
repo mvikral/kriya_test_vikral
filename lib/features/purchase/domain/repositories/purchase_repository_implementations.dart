@@ -1,14 +1,14 @@
 import 'package:dartz/dartz.dart';
 
-import '../../data/datasources/purchase_remote_data_implementations.dart';
-import '../entities/product.dart';
-import 'purchase_repository_contract.dart';
 import '../../../../global/error/exeptions.dart';
 import '../../../../global/error/failures.dart';
 import '../../../../global/network/network_info.dart';
+import '../../data/datasources/purchase_remote_data_contracts.dart';
+import '../entities/product.dart';
+import 'purchase_repository_contract.dart';
 
 class PurchaseRepository implements IPurchaseRepository {
-  final PurchaseRemoteData service;
+  final IPurchaseRemoteData service;
   final NetworkInfo networkInfo;
   PurchaseRepository({
     required this.service,

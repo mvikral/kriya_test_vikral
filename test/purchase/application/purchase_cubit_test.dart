@@ -3,7 +3,7 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:kriya_test_vikral/features/purchase/application/cubit/purchase_cubit.dart';
-import 'package:kriya_test_vikral/features/purchase/data/model/product_model.dart';
+
 import 'package:kriya_test_vikral/features/purchase/domain/entities/cart.dart';
 import 'package:kriya_test_vikral/features/purchase/domain/entities/product.dart';
 import 'package:kriya_test_vikral/global/error/failures.dart';
@@ -36,8 +36,8 @@ main() {
     'fetch all products',
     () {
       const testProduct = [
-        ProductModel(title: 'delectus aut autem', quantity: 0),
-        ProductModel(title: 'quis ut nam facilis et officia qui', quantity: 0),
+        Product(title: 'delectus aut autem', quantity: 0),
+        Product(title: 'quis ut nam facilis et officia qui', quantity: 0),
       ];
       blocTest<PurchaseCubit, PurchaseState>(
         'emits status loading and then loaded and also update producst state with data from api when fetch is success',
@@ -94,33 +94,38 @@ main() {
     'add products to cart',
     () {
       Product testProduct = const Product(
+          title: 'quis ut nam facilis et officia qui', quantity: 0);
+      Product testUpdatedProduct = const Product(
           title: 'quis ut nam facilis et officia qui', quantity: 1);
-      Product testProductAdded = const Product(
-          title: 'quis ut nam facilis et officia qui', quantity: 2);
       blocTest<PurchaseCubit, PurchaseState>(
         'should add product to cart and increase total when function get called',
-        build: () => PurchaseCubit(fetchAllProducts: usecase),
-        act: (cubit) => cubit.addProductToCart(testProduct),
-        expect: () {
-          return [
-            cubit.state.copyWith(cart: Cart(products: [testProduct], total: 1)),
-          ];
+        build: () => cubit,
+        act: (cubit) {
+          cubit.emit(
+            cubit.state.copyWith(
+              cart: const Cart(
+                products: [],
+                total: 0,
+              ),
+              products: [testProduct],
+            ),
+          );
+          return cubit.addProductToCart(testProduct);
         },
-      );
-
-      blocTest<PurchaseCubit, PurchaseState>(
-        'should add product quantyty increase total when same product is called',
-        build: () => PurchaseCubit(fetchAllProducts: usecase),
-        act: (cubit) => emitsInOrder([
-          cubit.addProductToCart(testProduct),
-          cubit.addProductToCart(testProduct),
-        ]),
         expect: () {
           return [
-            cubit.state
-                .copyWith(cart: Cart(products: [testProductAdded], total: 1)),
-            cubit.state
-                .copyWith(cart: Cart(products: [testProductAdded], total: 2)),
+            cubit.state.copyWith(
+              cart: const Cart(
+                products: [],
+                total: 0,
+              ),
+            ),
+            cubit.state.copyWith(
+              cart: Cart(
+                products: [testUpdatedProduct],
+                total: 1,
+              ),
+            ),
           ];
         },
       );
@@ -144,6 +149,7 @@ main() {
                 products: [testProduct],
                 total: 2,
               ),
+              products: [testProduct],
             ),
           );
           return cubit.substractProductFromCart(testProduct);
@@ -151,31 +157,11 @@ main() {
         expect: () {
           return [
             cubit.state.copyWith(
-                cart: Cart(products: [testSubtractedProduct], total: 2)),
+                cart: Cart(products: [testProduct], total: 2),
+                products: [testSubtractedProduct]),
             cubit.state.copyWith(
-                cart: Cart(products: [testSubtractedProduct], total: 1)),
-          ];
-        },
-      );
-
-      blocTest<PurchaseCubit, PurchaseState>(
-        'should remove product from cart when quantity is 0',
-        build: () => PurchaseCubit(fetchAllProducts: usecase),
-        act: (cubit) {
-          cubit.emit(
-            cubit.state.copyWith(
-              cart: Cart(
-                products: [testSubtractedProduct],
-                total: 1,
-              ),
-            ),
-          );
-          return cubit.substractProductFromCart(testSubtractedProduct);
-        },
-        expect: () {
-          return [
-            cubit.state.copyWith(cart: const Cart(products: [], total: 1)),
-            cubit.state.copyWith(cart: const Cart(products: [], total: 0)),
+                cart: Cart(products: [testSubtractedProduct], total: 1),
+                products: [testSubtractedProduct]),
           ];
         },
       );

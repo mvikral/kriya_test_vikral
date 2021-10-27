@@ -1,7 +1,8 @@
-import 'dart:convert';
-
 import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:kriya_test_vikral/features/purchase/application/usecase/payment.dart';
+import 'package:kriya_test_vikral/features/purchase/application/usecase/subtract_item_from_cart.dart';
+import '../usecase/add_item_to_cart.dart';
 import '../../domain/entities/cart.dart';
 import '../../domain/entities/product.dart';
 import '../../domain/usecases/fetch_all_products.dart';
@@ -40,10 +41,15 @@ class PurchaseCubit extends Cubit<PurchaseState> {
         }
       },
       (success) {
+        var products = success.map(
+          (product) {
+            return Product(title: product.title, quantity: product.quantity);
+          },
+        ).toList();
         emit(
           state.copyWith(
             status: LoadingStatus.loaded,
-            products: success,
+            products: products,
           ),
         );
       },
@@ -51,60 +57,50 @@ class PurchaseCubit extends Cubit<PurchaseState> {
   }
 
   Future<void> addProductToCart(Product product) async {
-    var cart = state.cart.products;
-    if (cart.contains(product)) {
-      int index = cart.indexOf(product);
-      cart[index] = Product(
-        title: cart[index].title,
-        quantity: cart[index].quantity + 1,
-      );
-
-      emit(
-        state.copyWith(
-          cart: Cart(
-            products: cart,
-            total: state.cart.total + 1,
-          ),
+    var cart = state.cart;
+    var prod = state.products;
+    var updatedState =
+        addItemToCart(cart: cart, products: prod, product: product);
+    emit(
+      state.copyWith(
+        cart: Cart(
+          products: updatedState.cart.products,
+          total: updatedState.cart.total,
         ),
-      );
-    } else {
+        products: updatedState.products,
+      ),
+    );
+  }
+
+  Future<void> substractProductFromCart(Product product) async {
+    if (product.quantity != 0) {
+      var cart = state.cart;
+      var prod = state.products;
+      final updatedState =
+          subtrackItemFromCart(cart: cart, products: prod, product: product);
       emit(
         state.copyWith(
           cart: Cart(
-            products: [product],
-            total: state.cart.total + 1,
+            products: updatedState.cart.products,
+            total: updatedState.cart.total,
           ),
+          products: updatedState.products,
         ),
       );
     }
   }
 
-  Future<void> substractProductFromCart(Product product) async {
-    var cart = state.cart.products;
-    int index = cart.indexOf(product);
-    if (cart[index].quantity == 1) {
-      cart.remove(cart[index]);
-      emit(
-        state.copyWith(
-          cart: Cart(
-            products: cart,
-            total: state.cart.total - 1,
-          ),
+  Future<void> finishPayment() async {
+    var prod = state.products;
+    final updatedState = payment(products: prod);
+    emit(
+      state.copyWith(
+        cart: Cart(
+          products: updatedState.cart.products,
+          total: updatedState.cart.total,
         ),
-      );
-    } else {
-      cart[index] = Product(
-        title: cart[index].title,
-        quantity: cart[index].quantity - 1,
-      );
-      emit(
-        state.copyWith(
-          cart: Cart(
-            products: cart,
-            total: state.cart.total - 1,
-          ),
-        ),
-      );
-    }
+        products: updatedState.products,
+      ),
+    );
   }
 }
